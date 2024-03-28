@@ -33,38 +33,40 @@ export default function App() {
   };
 
   const Questions = () => {
-    if (favorite && !formSubmitted) {
-      return (
-        <form onSubmit={handleSubmit}>
-          {questions.map((question) => (
-            <div key={question.id}>
-              <h2>{question.question}</h2>
-              <ul>
-                {question.options.map((option) => (
-                  <li key={option}>
-                    <input
-                      type="radio"
-                      name={question.question.split(" ")[0] + question.id}
-                      value={option}
-                      onChange={() => handleFavorite(question.id, option)}
-                    />
-                    {option}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-          <button type="submit">Submit</button>
-        </form>
-      );
-    } else {
-      return (
-        <div>
-          <h1>Thank you</h1>
-        </div>
-      );
-    }
+    return (
+      <div>
+        {favorite && !formSubmitted ? (
+          <form onSubmit={handleSubmit}>
+            {questions.map((question) => (
+              <div key={question.id}>
+                <h2>{question.question}</h2>
+                <ul>
+                  {question.options.map((option) => (
+                    <li key={option}>
+                      <input
+                        type="radio"
+                        name={question.question.split(" ")[0] + question.id}
+                        value={option}
+                        onChange={() => handleFavorite(question.id, option)}
+                        checked={favorite[question.id] === option}
+                      />
+                      {option}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+            <button type="submit">Submit</button>
+          </form>
+        ) : (
+          <div>
+            <h1>Thank you</h1>
+          </div>
+        )}
+      </div>
+    );
   };
+
   return (
     <main>
       <h1>Polling App</h1>
