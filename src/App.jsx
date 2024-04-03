@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function App() {
-  const [favorite, setFavorite] = useState({});
+  const [selectedOption, setSelectedOption] = useState([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const questions = [
     {
@@ -21,56 +21,57 @@ export default function App() {
     },
   ];
 
-  const handleFavorite = (questionId, option) => {
-    setFavorite({ ...favorite, [questionId]: option });
+  const changeHandler = (questionID, option) => {
+    setSelectedOption((prevOptions) => {
+      const updatedOptions = prevOptions.filter(
+        (prev) => prev.questionID !== questionID,
+      );
+      return [...updatedOptions, { questionID, option }];
+    });
+    console.log(selectedOption);
   };
 
-  const handleSubmit = (event) => {
+  const formHandler = (event) => {
     event.preventDefault();
-    if (Object.keys(favorite).length >= 3) {
-      setFormSubmitted(true);
-    }
-  };
-
-  const Questions = () => {
-    return (
-      <div>
-        {favorite && !formSubmitted ? (
-          <form onSubmit={handleSubmit}>
-            {questions.map((question) => (
-              <div key={question.id}>
-                <h2>{question.question}</h2>
-                <ul>
-                  {question.options.map((option) => (
-                    <li key={option}>
-                      <input
-                        type="radio"
-                        name={question.question.split(" ")[0] + question.id}
-                        value={option}
-                        onChange={() => handleFavorite(question.id, option)}
-                        checked={favorite[question.id] === option}
-                      />
-                      {option}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            <button type="submit">Submit</button>
-          </form>
-        ) : (
-          <div>
-            <h1>Thank you</h1>
-          </div>
-        )}
-      </div>
-    );
+    setFormSubmitted(true);
   };
 
   return (
-    <main>
-      <h1>Polling App</h1>
-      <Questions />
-    </main>
+    <>
+      {!formSubmitted ? (
+        <form className="App" onSubmit={formHandler}>
+          <h1>Polling App</h1>
+          {questions.map((question) => {
+            return (
+              <div key={question.id}>
+                <h3>{question.question}</h3>
+                <ul>
+                  {question.options.map((option, index) => {
+                    return (
+                      <li key={index}>
+                        <input
+                          type="radio"
+                          value={option}
+                          name={question.id}
+                          onChange={(event) =>
+                            changeHandler(question.id, event.target.value)
+                          }
+                        />
+                        {option}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })}
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        <div>
+          <h2>Thank you for your participation</h2>
+        </div>
+      )}
+    </>
   );
 }
